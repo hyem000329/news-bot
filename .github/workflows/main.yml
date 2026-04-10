@@ -16,6 +16,6 @@ jobs:
       with:
         python-version: '3.10'
 
-    - run: pip install feedparser newspaper3k requests
+    - run: pip install feedparser newspaper3k requests lxml_html_clean
 
     - run: python main.py
