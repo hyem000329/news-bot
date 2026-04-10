@@ -19,3 +19,6 @@ jobs:
     - run: pip install feedparser newspaper3k==0.2.8 requests lxml_html_clean lxml==4.9.3
     
     - run: python main.py
+      env:
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
