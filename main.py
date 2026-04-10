@@ -12,7 +12,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-RSS_URL = "https://news.google.com/rss/search?q=AI OR 관세 OR 반도체&hl=ko&gl=KR&ceid=KR:ko"
+RSS_URL = "https://news.google.com/rss/search?q=AI+OR+관세+OR+반도체&hl=ko&gl=KR&ceid=KR:ko"
 
 # 👉 관심 키워드 (자유 수정)
 KEYWORDS = ["AI", "반도체", "관세", "투자"]
