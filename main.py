@@ -15,7 +15,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # 🔥 키워드 설정
-KEYWORDS = ["관세", "트럼프", "수출"]
+KEYWORDS = ["관세", "수출"]
 query = "+OR+".join(KEYWORDS)
 
 RSS_URL = f"https://news.google.com/rss/search?q={query}&hl=ko&gl=KR&ceid=KR:ko"
@@ -65,7 +65,7 @@ prompt = f"""
 
 [출력 형식]
 
-📅 오늘의 뉴스 인사이트 ({', '.join(KEYWORDS)})
+📅 오늘의 뉴스 브리핑 ({', '.join(KEYWORDS)})
 
 1. 한 줄 요약
 - 전체 흐름 한 문장
