@@ -23,9 +23,11 @@ for entry in feed.entries[:3]:
 
     message = f"📰 {entry.title}\n\n{text}\n\n{url}"
 
-    requests.get(
-        f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
-        params={"chat_id": CHAT_ID, "text": message}
-    )
+    res = requests.get(
+    f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+    params={"chat_id": CHAT_ID, "text": message}
+)
+
+print(res.text)
 
 print("완료")
