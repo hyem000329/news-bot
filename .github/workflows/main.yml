@@ -2,24 +2,30 @@ name: News Bot
 
 on:
   schedule:
-    - cron: '0 23 * * *'  # 한국 오전 8시
+    - cron: '0 23 * * *'  # 🇰🇷 매일 오전 8시 (UTC 기준)
   workflow_dispatch:
 
 jobs:
-  run:
+  run-news-bot:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - run: pip install feedparser newspaper3k requests lxml_html_clean lxml==4.9.3 google-generativeai
-    
-    - run: python main.py
-      env:
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        CHAT_ID: ${{ secrets.CHAT_ID }}
-        GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      - name: 라이브러리 설치
+        run: |
+          pip install feedparser newspaper3k requests lxml_html_clean lxml==4.9.3 google-generativeai
+
+      - name: 뉴스 봇 실행
+        run: python main.py
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
