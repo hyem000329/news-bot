@@ -4,7 +4,6 @@ import requests
 from newspaper import Article
 import google.generativeai as genai
 
-# 🔐 환경변수
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -12,51 +11,53 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+# 👉 넓게 가져오기 (필터 없이)
 RSS_URL = "https://news.google.com/rss/search?q=AI+OR+관세+OR+반도체&hl=ko&gl=KR&ceid=KR:ko"
-
-# 👉 관심 키워드 (자유 수정)
-KEYWORDS = ["AI", "반도체", "관세", "투자"]
 
 feed = feedparser.parse(RSS_URL)
 
-for entry in feed.entries[:5]:
-    title = entry.title
-    url = entry.link
+articles_text = []
 
-    # 🔍 키워드 필터
-    if not any(k.lower() in title.lower() for k in KEYWORDS):
-        continue
+# 🔹 여러 기사 수집
+for entry in feed.entries[:5]:
+    url = entry.link
 
     try:
         article = Article(url)
         article.download()
         article.parse()
-        text = article.text[:2000]
+        text = article.text[:1000]
+
+        if len(text) > 200:
+            articles_text.append(text)
+
     except:
-        text = ""
+        continue
 
-    # 🤖 Gemini 요약
-    try:
-        prompt = f"""
-        다음 뉴스 내용을 한국어로 3줄 요약하고,
-        핵심 키워드 3개 뽑아줘:
+# 🔹 전체 텍스트 합치기
+combined_text = "\n\n".join(articles_text)
 
-        {text}
-        """
+# 🔹 Gemini로 전체 요약
+prompt = f"""
+다음 뉴스 여러 개를 읽고,
+중요한 흐름과 핵심 내용을 정리해서 요약해줘.
 
-        response = model.generate_content(prompt)
-        summary = response.text
+- 전체 트렌드
+- 중요한 이슈 3~5개
+- 핵심 키워드
 
-    except Exception as e:
-        summary = "요약 실패"
+{combined_text}
+"""
 
-    message = f"📰 {title}\n\n{summary}\n\n{url}"
+response = model.generate_content(prompt)
+summary = response.text
 
-    res = requests.get(
-        f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
-        params={"chat_id": CHAT_ID, "text": message}
-    )
+# 🔹 텔레그램 전송 (1번만)
+message = f"📰 오늘의 뉴스 요약\n\n{summary}"
 
-    print(res.text)
+res = requests.get(
+    f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+    params={"chat_id": CHAT_ID, "text": message}
+)
 
-print("완료")
+print(res.text)
