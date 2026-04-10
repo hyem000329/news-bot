@@ -12,8 +12,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Gemini 설정
 genai.configure(api_key=GEMINI_API_KEY)
-# 무료 티어에서 가장 빠르고 효율적인 모델 (1.5 Flash 권장)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 # 🔥 2. 키워드 설정
 KEYWORDS = ["관세", "트럼프", "수출"]
