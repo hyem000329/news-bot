@@ -3,7 +3,6 @@ import feedparser
 import requests
 from newspaper import Article
 
-# 🔐 환경변수 (GitHub Secrets에서 가져옴)
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
@@ -14,13 +13,15 @@ feed = feedparser.parse(RSS_URL)
 for entry in feed.entries[:3]:
     url = entry.link
 
-    article = Article(url)
-    article.download()
-    article.parse()
+    try:
+        article = Article(url)
+        article.download()
+        article.parse()
+        text = article.text[:200]
+    except:
+        text = "본문 추출 실패"
 
-    text = article.text[:1000]
-
-    message = f"📰 {entry.title}\n\n{text[:200]}...\n\n{url}"
+    message = f"📰 {entry.title}\n\n{text}\n\n{url}"
 
     requests.get(
         f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
